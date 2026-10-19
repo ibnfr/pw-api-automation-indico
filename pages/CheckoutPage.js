@@ -5,8 +5,6 @@ class CheckoutPage {
     this.page = page;
 
     // form checkout
-    this.productName = page.locator('[data-test="item-4-title-link"]');
-    this.addToCartButton = page.locator('[data-test="add-to-cart"]');
     this.checkoutButton = page.locator('[data-test="checkout"]');
     this.firstNameInput = page.locator('[data-test="firstName"]');
     this.lastNameInput = page.locator('[data-test="lastName"]');
@@ -18,7 +16,7 @@ class CheckoutPage {
     this.productBackPack = page.locator('[data-test="add-to-cart-sauce-labs-backpack"]');
     this.productBikeLight =page.locator('[data-test="add-to-cart-sauce-labs-bike-light"]');
     this.productTShirt = page.locator('[data-test="add-to-cart-sauce-labs-bolt-t-shirt"]');
-    this.productJacket = page.locator('[data-test="add-to-cart-sauce-labs-fleece-jacket"]');
+    this.productOnesie = page.locator('[data-test="add-to-cart-sauce-labs-onesie"]');
 
     // success message
     this.successMessage = page.locator('[data-test="complete-header"]');

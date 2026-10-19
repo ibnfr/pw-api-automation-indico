@@ -1,4 +1,4 @@
-![Playwright Tests](https://github.com/ibnfr/pw-assemblr-saucedemo/actions/workflows/playwright.yml/badge.svg)
+![Playwright Tests](https://github.com/ibnfr/pw-ui-automation-indico/actions/workflows/playwright.yml/badge.svg)
 
 # Playwright SauceDemo — UI Automation (JavaScript)
 
