@@ -1,8 +1,8 @@
-![Playwright Tests](https://github.com/ibnfr/pw-ui-automation-indico/actions/workflows/playwright.yml/badge.svg)
+![Playwright Tests](https://github.com/ibnfr/pw-api-automation-indico/actions/workflows/playwright.yml/badge.svg)
 
-# Playwright SauceDemo — UI Automation (JavaScript)
+# Playwright PetStore Swagger — API Automation (JavaScript)
 
-Automated UI tests for [SauceDemo](https://www.saucedemo.com/),
+Automated API tests for [PetStore Swagger](https://petstore.swagger.io/#/),
 built with [Playwright](https://playwright.dev) and JavaScript.
 
 This repository is the automation layer of a wider QA case study.
@@ -11,12 +11,11 @@ This repository is the automation layer of a wider QA case study.
 
 ## Scope
 
-6 automated test cases across 2 modules.
+14 automated test cases across 2 modules.
 
 | Module | File | Test cases |
 | --- | --- | --- |
-| Authentication | `tests/auth/login.spec.js` | TC-UI-AUTH-001-1 … 001-4 |
-| E2E | `tests/e2e/checkout.spec.js` | TC-UI-CHECKOUT-001-1, 001-2 |
+| api | `tests/api/petstore.spec.js` | TC-API-001 … 014 |
 
 Test IDs map can user for the manual test case document, so results can be traced
 back to the original design.
@@ -30,14 +29,13 @@ A scenario was automated when it met all of the following:
 - Runs repeatedly in every regression cycle
 - Produces a deterministic result for the same input
 - Requires no visual or subjective judgement
-- Does not depend on data created by another test
+- Data flow covers complete lifecycle (Create, Read, Delete)
 
-Scenarios that were deliberately **left manual**:
+Scenarios that were deliberately **left manual / out of scope**:
 
-- Flows that cross user roles and require switching accounts mid-test
-- Verification of data consistency between modules
-- Exploratory checks where the expected behaviour is not yet confirmed
-- Screens whose layout is still changing, so selectors are not yet stable
+- Performance and Load testing under heavy parallel request spikes
+- Advanced security/penetration testing on the endpoints
+- Verification of token expiration periods for private endpoints
 
 
 ---
@@ -54,9 +52,7 @@ npx playwright install
 Create a `.env` file in the project root, using `.env.example` as a template:
 
 ```
-BASE_URL=https://www.saucedemo.com
-STANDARD_USERNAME=standard_user
-USER_PASSWORD=secret_sauce
+BASE_URL=https://petstore.swagger.io/v2/pet
 ```
 
 The demo credentials are published openly by OrangeHRM. They are kept in `.env`
@@ -78,7 +74,7 @@ npx playwright test tests/auth/login.spec.js
 npx playwright test --headed
 
 # filter by test name
-npx playwright test -g "001-1"
+npx playwright test -g "001"
 
 # open the HTML report
 npx playwright show-report
@@ -89,60 +85,35 @@ npx playwright show-report
 ## Project structure
 
 ```
-playwright-orangehrm-js/
-├── pages/
-│   ├── LoginPage.js
-│   └── CheckoutPage.js
+pw-api-automation-indico/
 ├── tests/
-│   ├── auth/
-│   │   └── login.spec.js
-│   └── e2e/
-│       └── checkout.spec.js
+│   └── api/
+│       └── petstore.spec.js
 ├── .env.example
 ├── .gitignore
 ├── playwright.config.js
 └── README.md
 ```
 
-Page objects expose locators and actions only. Assertions live in the spec files,
-which keeps the page objects reusable across tests with different expectations.
+All API request definitions, endpoints lifecycle handling, and response data assertions live inside the spec file to keep sequential dependency clear and logical.
 
 ---
 
 ## Configuration notes
 
-**Chromium only.** Cross-browser testing was declared out of scope in the test
-plan, so the browser projects here match that decision rather than enabling all
-three by default.
+**API-Only Execution.** Browser project contexts (Chromium, Firefox, WebKit) are optimized or skipped inside `playwright.config.js` since API testing interacts directly with the network layers.
 
-**One retry locally, two in CI.** The demo instance is shared and its data is
-modified by other users during a run. A single retry separates genuine failures
-from transient interference without masking a real regression.
+**Sequential Execution (Serial Mode).** The suite uses `test.describe.configure({ mode: 'serial' })` inside the spec file. This prevents Playwright from running the tests in parallel, ensuring that `DELETE` and `GET` requests successfully capture the temporary ID created by the preceding `POST` request.
 
-**Two workers.** The shared instance throttles under heavy parallel load, which
-produces timeouts that look like defects but are not.
-
-**Artifacts on failure only.** Screenshots and video are captured on failure,
-traces on the first retry. This keeps debugging information available without
-inflating the repository.
+**Artifacts on failure.** Console network logs and API traces are captured on failure to facilitate quick debugging without inflating the repository size.
 
 ---
 
 ## Notes from building this suite
 
-**Locators avoid user data.** The profile dropdown was initially matched by the
-logged-in user's name. That name belongs to an employee record other users can
-edit, so it was replaced with a design-system class that does not change with
-the data.
+**Dynamic Unique IDs prevent 404 Race Conditions.** The public Swagger PetStore API is volatile and shared globally. To prevent data from being overwritten or instantly cleared by other public workflows between our `POST` and `DELETE` requests, the suite implements a dynamic random ID generator (`Math.random()`) for each test run.
 
-**`count()` does not wait.** Methods like `count()`, `textContent()` and
-`isVisible()` read the DOM immediately, unlike `expect()` which retries. On this
-Vue-based application the URL changes before the view finishes rendering, so
-waiting on a visible element — not on the URL — is what makes the checks stable.
-
-**"No Records Found" appears twice.** The application shows the message both in
-the results area and in a toast notification, which triggers a strict mode
-violation. The locator targets the `span` in the results area specifically.
+**Identified Data Validation Inconsistency (Bug/Defect).** During negative testing where a `string` was intentionally sent into the integer `id` field, a strict contrast was observed. Manual clients (Postman) gracefully returned `400 Bad Request`, whereas standard automation HTTP clients triggered a fatal unhandled backend crash, returning a `500 Internal Server Error` with `something bad happened` message. The test script asserts this actual 500 outcome to preserve honesty in reporting backend validation limits.
 
 ---
 

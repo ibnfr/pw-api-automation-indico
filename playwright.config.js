@@ -4,7 +4,7 @@ require('dotenv').config();
 const { defineConfig, devices } = require('@playwright/test');
 
 module.exports = defineConfig({
-  testDir: './tests',
+  testDir: './tests/api',
 
   // Gagal di CI kalau ada test.only yang tertinggal
   forbidOnly: !!process.env.CI,
@@ -22,7 +22,7 @@ module.exports = defineConfig({
   ],
 
   use: {
-    baseURL: process.env.BASE_URL ?? 'https://saucedemo.com/',
+    baseURL: process.env.BASE_URL ?? 'https://petstore.swagger.io/#/',
 
     // Bukti hanya diambil saat dibutuhkan, agar ukuran repo tetap wajar
     screenshot: 'only-on-failure',
