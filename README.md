@@ -117,6 +117,31 @@ All API request definitions, endpoints lifecycle handling, and response data ass
 
 ---
 
+## 📊 Test Execution Report (API Test)
+
+**Date of Execution:** October 20, 2026
+**Automation Tool:** Playwright API Request (JavaScript)
+
+### a. Summary
+*   **Total Test Cases:** 14
+*   **Pass:** 9
+*   **Pass with Note:** 1
+*   **Fail:** 4
+
+### b. Pass Rate
+*   **71.43% Pass Rate** (Calculated based on Pass and Pass with Note status)
+
+### c. Defect / Bug List
+Terdapat **4 skenario failed** pada pengujian validasi input negatif dengan rincian ID berikut:
+*   **TC-API-006** (Invalid POST request - Empty Body)
+*   **TC-API-007** (Invalid POST request - Missing Name)
+*   **TC-API-008** (Invalid POST request - String on Integer ID)
+*   **TC-API-009** (Invalid POST request - Invalid Status Value)
+
+*Note: Bukti tangkapan layar (capture) respons error 500/data lolos serta catatan pengujian mendalam untuk masing-masing defect di atas telah dilampirkan secara lengkap di dalam dokumen master test case.*
+
+---
+
 ## Author
 
 Ibnu Farhan Ramadhan — QA Engineer
