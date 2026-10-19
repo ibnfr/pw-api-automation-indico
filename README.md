@@ -1,4 +1,4 @@
-![Playwright Tests](https://github.com/ibnfr/pw-api-automation-indico/actions/workflows/playwright.yml/badge.svg)
+![Playwright Tests](https://github.com)
 
 # Playwright PetStore Swagger — API Automation (JavaScript)
 
